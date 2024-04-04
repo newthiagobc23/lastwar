@@ -61,7 +61,7 @@ def numformat(num):
 
 ###############################################TABS###################################################
 ######################################################################################################
-tab1, tab2, tab3 = st.tabs(["Hero Exp", "Speed-Up", "Stamina"])
+tab1, tab2, tab3, tab4 = st.tabs(["Hero Exp", "Speed-Up", "Stamina", "Loot Load"])
 
 ###############################################TABS###################################################
 ######################################################################################################
@@ -157,3 +157,90 @@ with tab3:
             st.write('Time remaining for full stamina:', stamina_time, 'Minutes')
     else:
         st.write('Already at full stamina')
+
+######################################################################################################
+######################################################################################################
+
+with tab4:
+    st.header('Attack Loot Estimate')
+
+    max_load = st.number_input('Your unit load in Millions:', value=0.)
+
+    load_red = st.selectbox('Load Reduction:', ['none', '15%', '5%'])
+
+    load = max_load
+    if load_red == '15%':
+        load = load * 0.15
+    if load_red == '5%':
+        load = load * 0.05
+
+    iron = st.number_input("Target's IRON in millions:", value=0.)
+    coin = st.number_input("Target's COIN in millions:", value=0.)
+    bread = st.number_input("Target's FOOD in millions:", value=0.)
+
+    total_resources = iron + coin + bread
+    iron_p = 0
+    coin_p = 0
+    bread_p = 0
+
+    if total_resources > 0:
+        iron_p = iron / total_resources
+        coin_p = coin / total_resources
+        bread_p = bread / total_resources
+
+    iron_loot = iron_p * load
+    if iron_loot > iron:
+        iron_loot = iron
+
+    coin_loot = coin_p * load
+    if coin_loot > coin:
+        coin_loot = coin
+    
+    bread_loot = bread_p * load
+    if bread_loot > bread:
+        bread_loot = bread
+
+    def convert(num):
+        if num < 1:
+            return '{:.2f}K'.format(num * 1000)
+        else:
+            return '{:.2f}M'.format(num)
+
+
+    if iron_loot != 0 or coin_loot != 0 or bread_loot != 0:
+        st.divider()
+        
+        st.write('IRON loot: ', convert(iron_loot))
+        st.write('COIN loot: ', convert(coin_loot))
+        st.write('BREAD loot: ', convert(bread_loot))
+
+
+
+footer="""<style>
+a:link , a:visited{
+color: blue;
+background-color: transparent;
+text-decoration: underline;
+}
+
+a:hover,  a:active {
+color: red;
+background-color: transparent;
+text-decoration: underline;
+}
+
+.footer {
+position: fixed;
+left: 0;
+bottom: 0;
+width: 100%;
+background-color: white;
+color: black;
+text-align: center;
+}
+</style>
+<div class="footer">
+<p>Developed with ❤ by thiagobc23 | #54 WRG <a style='display: block; text-align: center;' href="https://ko-fi.com/thiagobc23" target="_blank">Enjoyed your visit? Show your support with a tip!</a></p>
+</div>
+"""
+st.markdown(footer,unsafe_allow_html=True)
