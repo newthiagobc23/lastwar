@@ -58,6 +58,35 @@ def numformat(num):
     else: 
         return f'{fn}' 
 
+footer="""<style>
+a:link , a:visited{
+color: blue;
+background-color: transparent;
+text-decoration: underline;
+}
+
+a:hover,  a:active {
+color: red;
+background-color: transparent;
+text-decoration: underline;
+}
+
+.footer {
+position: fixed;
+left: 0;
+bottom: 0;
+width: 100%;
+background-color: white;
+color: black;
+text-align: center;
+}
+</style>
+<div class="footer">
+<p>Developed with ❤ by thiagobc23 | #54 WRG <a style='display: block; text-align: center;' href="https://ko-fi.com/thiagobc23" target="_blank">Enjoyed your visit? Show your support with a tip!</a></p>
+</div>
+"""
+
+
 
 ###############################################TABS###################################################
 ######################################################################################################
@@ -99,6 +128,8 @@ with tab1:
         st.write('VS Points: ', numformat(int(req_exp/660)*vs_event), '({:0,})'.format(int(req_exp/660)*vs_event) )
     else:
         st.write('VS Points: ', '{:0,}'.format(int(req_exp/660)*vs_event) )
+
+    st.markdown(footer,unsafe_allow_html=True)
 ###############################################TABS###################################################
 ######################################################################################################
 
@@ -138,6 +169,8 @@ with tab2:
 
     st.write('VS Points: ', numformat(speedup_points * total_minutes), '({:0,})'.format(speedup_points * total_minutes) )
 
+    st.markdown(footer,unsafe_allow_html=True)
+
 ###############################################TABS###################################################
 ######################################################################################################
 
@@ -157,6 +190,8 @@ with tab3:
             st.write('Time remaining for full stamina:', stamina_time, 'Minutes')
     else:
         st.write('Already at full stamina')
+
+    st.markdown(footer,unsafe_allow_html=True)
 
 ######################################################################################################
 ######################################################################################################
@@ -214,33 +249,6 @@ with tab4:
         st.write('COIN loot: ', convert(coin_loot))
         st.write('BREAD loot: ', convert(bread_loot))
 
+    st.markdown(footer,unsafe_allow_html=True)
 
 
-footer="""<style>
-a:link , a:visited{
-color: blue;
-background-color: transparent;
-text-decoration: underline;
-}
-
-a:hover,  a:active {
-color: red;
-background-color: transparent;
-text-decoration: underline;
-}
-
-.footer {
-position: fixed;
-left: 0;
-bottom: 0;
-width: 100%;
-background-color: white;
-color: black;
-text-align: center;
-}
-</style>
-<div class="footer">
-<p>Developed with ❤ by thiagobc23 | #54 WRG <a style='display: block; text-align: center;' href="https://ko-fi.com/thiagobc23" target="_blank">Enjoyed your visit? Show your support with a tip!</a></p>
-</div>
-"""
-st.markdown(footer,unsafe_allow_html=True)
