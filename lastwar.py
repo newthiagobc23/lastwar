@@ -33,23 +33,6 @@ level_exp = [0,100,200,300,400, #1-5
             165000000,170000000,175000000,180000000,185000000 #146-150
             ]
 
-st.markdown('## Hero Experience Calculator')
-
-current_level = st.selectbox(
-    'Current Hero Level',
-    np.arange(1,151))
-
-
-target_level = st.selectbox(
-    'Target Hero Level',
-    np.arange(1,151))
-
-
-st.write('Going from level ', int(current_level), ' to level ', target_level)
-
-req_exp = sum(level_exp[current_level-1:target_level])
-
-
 def numformat(num):
     fn = 0
     if num > 999999999:
@@ -76,18 +59,101 @@ def numformat(num):
         return f'{fn}' 
 
 
-if numformat(req_exp) != '':
-    st.write('Required Experience: ', numformat(req_exp), '({:0,})'.format(req_exp))
-else:
-    st.write('Required Experience: ', '{:0,}'.format(req_exp))
+###############################################TABS###################################################
+######################################################################################################
+tab1, tab2, tab3 = st.tabs(["Hero Exp", "Speed-Up", "Stamina"])
+
+###############################################TABS###################################################
+######################################################################################################
+
+with tab1:
+    st.header('Hero Level Calculator')
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        current_level = st.selectbox(
+            'Current Hero Level',
+            np.arange(1,151))
+    with col2:
+        target_level = st.selectbox(
+        'Target Hero Level',
+        np.arange(1,151))
+
+    st.write('Going from level ', int(current_level), ' to level ', target_level)
+
+    req_exp = sum(level_exp[current_level-1:target_level])
+
+    if numformat(req_exp) != '':
+        st.write('Required Experience: ', numformat(req_exp), '({:0,})'.format(req_exp))
+    else:
+        st.write('Required Experience: ', '{:0,}'.format(req_exp))
 
 
-st.markdown('## VS Hero Day Points Calculator')
-vs_event = st.selectbox(
-    'VS reward per 660xp points:',
-    [1,2])
+    st.markdown('## VS Hero Day Points Calculator')
+    vs_event = st.selectbox(
+        'VS reward per 660xp points:',
+        [1,2])
+
+    if req_exp/660 >= 1000000:
+        st.write('VS Points: ', numformat(int(req_exp/660)*vs_event), '({:0,})'.format(int(req_exp/660)*vs_event) )
+    else:
+        st.write('VS Points: ', '{:0,}'.format(int(req_exp/660)*vs_event) )
+###############################################TABS###################################################
+######################################################################################################
+
+with tab2:
+    st.header('Speed-up Calculator')
 
 
-st.write( '{:0,}'.format(int(req_exp/660)*vs_event) )
+    om = st.number_input('Number of 1 Minute Speedups:', value=0, format='%d')
+    fm = st.number_input('Number of 5 Minutes Speedups:', value=0, format='%d')
+    oh = st.number_input('Number of 1 Hour Speedups:', value=0, format='%d')
+    th = st.number_input('Number of 3 Hours Speedups:', value=0, format='%d')
+    eh = st.number_input('Number of 8 Hours Speedups:', value=0, format='%d')
 
-#660 = 2pts
+    fm_min = fm * 5
+    oh_min = oh * 60
+    th_min = th * 180
+    eh_min = eh * 480
+
+    total_minutes = om + fm_min + oh_min + th_min + eh_min
+
+    total_hours = total_minutes/60
+    total_days = total_hours/24
+
+
+    remainder_hours = total_hours - int(total_days)*24
+    remainder_minutes = total_minutes - (int(remainder_hours)*60) - (int(total_days)*24*60)
+
+    if total_days >= 1:
+        st.write('Total time:', '{:0,}'.format(int(total_days)), ' days, ', '{:0,}'.format(int(remainder_hours)), ' hours, and ', '{:0,}'.format(int(remainder_minutes)), ' minutes', '({:0,}'.format(total_minutes), ' minutes)')
+    elif remainder_hours >= 1:
+        st.write('Total time:', '{:0,}'.format(int(remainder_hours)), ' hours, and ', '{:0,}'.format(int(remainder_minutes)), ' minutes', '({:0,}'.format(total_minutes), ' minutes)')
+    else:
+        st.write('Total time:', '{:0,}'.format(total_minutes), ' minutes')
+
+    st.markdown('## VS Points Calculator')
+    speedup_points = st.number_input('Points per 1min speed-up:', value=0, format='%d')
+
+    st.write('VS Points: ', numformat(speedup_points * total_minutes), '({:0,})'.format(speedup_points * total_minutes) )
+
+###############################################TABS###################################################
+######################################################################################################
+
+with tab3:
+    st.header('Full Stamina Time')
+
+    c_stamina = st.number_input('Your current stamina:', value=0, format='%d')
+    if c_stamina < 120:
+        m_stamina = 120 - c_stamina
+        stamina_time = m_stamina * 5
+
+        if stamina_time >= 60:
+            stamina_hours = stamina_time/60
+            stamina_minutes = stamina_time - (int(stamina_hours) * 60)
+            st.write('Time remaining for full stamina:', '{:0,}'.format(int(stamina_hours)), ' Hours and ', '{:0,}'.format(stamina_minutes), 'Minutes ({:0,} minutes)'.format(stamina_time))
+        else:
+            st.write('Time remaining for full stamina:', stamina_time, 'Minutes')
+    else:
+        st.write('Already at full stamina')
