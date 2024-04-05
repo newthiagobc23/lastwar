@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import streamlit_analytics
 
 level_exp = [0,100,200,300,400, #1-5
             500,600,700,800,900, #6-10
@@ -86,7 +87,9 @@ text-align: center;
 </div>
 """
 
+streamlit_analytics.track(unsafe_password="9919")
 
+streamlit_analytics.start_tracking()
 
 ###############################################TABS###################################################
 ######################################################################################################
@@ -252,3 +255,5 @@ with tab4:
     st.markdown(footer,unsafe_allow_html=True)
 
 
+
+streamlit_analytics.stop_tracking()
