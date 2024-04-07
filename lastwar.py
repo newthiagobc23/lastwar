@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import streamlit_analytics
+import matplotlib.pyplot as plt
 
 level_exp = [0,100,200,300,400, #1-5
             500,600,700,800,900, #6-10
@@ -91,7 +92,7 @@ streamlit_analytics.start_tracking()
 
 ###############################################TABS###################################################
 ######################################################################################################
-tab1, tab2, tab3, tab4 = st.tabs(["Hero Exp", "Speed-Up", "Stamina", "Loot Load"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Hero Exp", "Speed-Up", "Stamina", "Loot Load", "Farm Output"])
 
 ###############################################TABS###################################################
 ######################################################################################################
@@ -104,11 +105,11 @@ with tab1:
     with col1:
         current_level = st.selectbox(
             'Current Hero Level',
-            np.arange(1,151))
+            np.arange(1,150))
     with col2:
         target_level = st.selectbox(
         'Target Hero Level',
-        np.arange(1,151))
+        np.arange(current_level+1,151))
 
     st.write('Going from level ', int(current_level), ' to level ', target_level)
 
@@ -138,11 +139,11 @@ with tab2:
     st.header('Speed-up Calculator')
 
 
-    om = st.number_input('Number of 1 Minute Speedups:', value=0, format='%d')
-    fm = st.number_input('Number of 5 Minutes Speedups:', value=0, format='%d')
-    oh = st.number_input('Number of 1 Hour Speedups:', value=0, format='%d')
-    th = st.number_input('Number of 3 Hours Speedups:', value=0, format='%d')
-    eh = st.number_input('Number of 8 Hours Speedups:', value=0, format='%d')
+    om = st.number_input('Number of 1 Minute Speedups:', value=0, format='%d', min_value=0)
+    fm = st.number_input('Number of 5 Minutes Speedups:', value=0, format='%d', min_value=0)
+    oh = st.number_input('Number of 1 Hour Speedups:', value=0, format='%d', min_value=0)
+    th = st.number_input('Number of 3 Hours Speedups:', value=0, format='%d', min_value=0)
+    eh = st.number_input('Number of 8 Hours Speedups:', value=0, format='%d', min_value=0)
 
     fm_min = fm * 5
     oh_min = oh * 60
@@ -166,7 +167,7 @@ with tab2:
         st.write('Total time:', '{:0,}'.format(total_minutes), ' minutes')
 
     st.markdown('## VS Points Calculator')
-    speedup_points = st.number_input('Points per 1min speed-up:', value=0, format='%d')
+    speedup_points = st.number_input('Points per 1min speed-up:', value=0, format='%d', min_value=0)
 
     st.write('VS Points: ', numformat(speedup_points * total_minutes), '({:0,})'.format(speedup_points * total_minutes) )
 
@@ -178,7 +179,7 @@ with tab2:
 with tab3:
     st.header('Full Stamina Time')
 
-    c_stamina = st.number_input('Your current stamina:', value=0, format='%d')
+    c_stamina = st.number_input('Your current stamina:', value=0, format='%d', min_value=0)
     if c_stamina < 120:
         m_stamina = 120 - c_stamina
         stamina_time = m_stamina * 5
@@ -200,7 +201,7 @@ with tab3:
 with tab4:
     st.header('Attack Loot Estimate')
 
-    max_load = st.number_input('Your unit load in Millions:', value=0.)
+    max_load = st.number_input('Your unit load in Millions:', value=0., min_value=0.)
 
     load_red = st.selectbox('Load Reduction:', ['none', '15%', '5%'])
 
@@ -210,9 +211,9 @@ with tab4:
     if load_red == '5%':
         load = load * 0.05
 
-    iron = st.number_input("Target's IRON in millions:", value=0.)
-    coin = st.number_input("Target's COIN in millions:", value=0.)
-    bread = st.number_input("Target's FOOD in millions:", value=0.)
+    iron = st.number_input("Target's IRON in millions:", value=0., min_value=0.)
+    coin = st.number_input("Target's COIN in millions:", value=0., min_value=0.)
+    bread = st.number_input("Target's FOOD in millions:", value=0., min_value=0.)
 
     total_resources = iron + coin + bread
     iron_p = 0
@@ -254,3 +255,84 @@ with tab4:
 
 
 streamlit_analytics.stop_tracking()
+
+######################################################################################################
+######################################################################################################
+
+with tab5:
+    st.header('Farm Output')
+
+
+    building_one = st.number_input("Building 1 output per hour:", value=0, min_value=0)
+    building_two = st.number_input("Building 2 output per hour:", value=0, min_value=0)
+    building_three = st.number_input("Building 3 output per hour:", value=0, min_value=0)
+    building_four = st.number_input("Building 4 output per hour:", value=0, min_value=0)
+    building_five = st.number_input("Building 5 output per hour:", value=0, min_value=0)
+
+    output_per_hour = building_one + building_two + building_three + building_four + building_five
+
+    output_list = []
+    for i in np.arange(0, 240):
+        #st.write(i)
+        output_list.append((i+1) *output_per_hour)
+
+    fig, ax = plt.subplots(1, figsize=(16,6), facecolor='#0E1117')
+    ax.set_facecolor('#0E1117')
+
+    plt.plot( np.arange(0, 240), output_list, color='#C62C1D', lw=2.5)
+
+    # remove spines
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    
+    # spine colors
+    ax.spines['left'].set_color('w')
+    ax.spines['bottom'].set_color('w')
+    
+    # grid
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(color='#848484', linestyle='solid')
+    ax.xaxis.grid(color='#848484', linestyle='solid')
+
+    # ticks
+    for tick in ax.xaxis.get_ticklines(): 
+        tick.set_color('w')
+    for tick in ax.yaxis.get_ticklines(): 
+        tick.set_color('w')
+    plt.xticks(color='w')
+    plt.yticks(color='w')
+
+    x_ticks = [23,47,71,95,119,143,167,191,215,239]
+    x_ticks_labels = ['1 Day', '2 Days', '3 Days', '4 Days', '5 Days', '6 Days', '7 Days', '8 Days', '9 Days', '10 Days']
+    
+    y_ticks = []
+    for i in x_ticks:
+        y_ticks.append(output_list[i])
+
+    y_ticks_labels = []
+    for i in y_ticks:
+        if i>999: y_ticks_labels.append(numformat(i))
+        else: y_ticks_labels.append(i)
+
+    plt.xticks(x_ticks, labels=x_ticks_labels, fontsize=14)
+    plt.yticks(y_ticks, labels=y_ticks_labels, fontsize=14)
+
+    if st.button('View Stats'):
+        st.pyplot(fig)
+        if output_per_hour>999:
+            st.write('Total Output Per Hour:', numformat(output_per_hour))
+        else:
+            st.write('Total Output Per Hour:', output_per_hour)
+        if output_per_hour*6>999:
+            st.write('Total Output in 6 Hours:', numformat(output_per_hour*6))
+        else:
+            st.write('Total Output in 6 Hours:', output_per_hour*6)
+        if output_per_hour*12>999:
+            st.write('Total Output in 12 Hours:', numformat(output_per_hour*12))
+        else:
+            st.write('Total Output in 12 Hours:', output_per_hour*12)
+        if output_per_hour*24>999:
+            st.write('Total Output Per Day:', numformat(output_per_hour*24))
+        else:
+            st.write('Total Output Per Day:', output_per_hour*24)
+
