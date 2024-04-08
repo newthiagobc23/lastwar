@@ -3,6 +3,10 @@ import numpy as np
 import streamlit_analytics
 import matplotlib.pyplot as plt
 
+st.set_page_config(
+        page_title="Last War Calculator",
+)
+
 level_exp = [0,100,200,300,400, #1-5
             500,600,700,800,900, #6-10
             1000,1100,1200,1300,1400, #11-15
@@ -92,6 +96,11 @@ streamlit_analytics.start_tracking()
 
 ###############################################TABS###################################################
 ######################################################################################################
+
+st.title('Last War Calculator')
+
+
+
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Hero Exp", "Speed-Up", "Stamina", "Loot Load", "Farm Output"])
 
 ###############################################TABS###################################################
@@ -179,7 +188,7 @@ with tab2:
 with tab3:
     st.header('Full Stamina Time')
 
-    c_stamina = st.number_input('Your current stamina:', value=0, format='%d', min_value=0)
+    c_stamina = st.number_input('Your current stamina:', value=0, format='%d', min_value=0, max_value=119)
     if c_stamina < 120:
         m_stamina = 120 - c_stamina
         stamina_time = m_stamina * 5
@@ -262,14 +271,21 @@ streamlit_analytics.stop_tracking()
 with tab5:
     st.header('Farm Output')
 
+    All_the_same = st.checkbox('All buildings the same level')
 
-    building_one = st.number_input("Building 1 output per hour:", value=0, min_value=0)
-    building_two = st.number_input("Building 2 output per hour:", value=0, min_value=0)
-    building_three = st.number_input("Building 3 output per hour:", value=0, min_value=0)
-    building_four = st.number_input("Building 4 output per hour:", value=0, min_value=0)
-    building_five = st.number_input("Building 5 output per hour:", value=0, min_value=0)
+    if All_the_same:
+        num_of_buildings = st.number_input("Number of Buildings:", value=1, min_value=1, max_value=5)
+        building_one = st.number_input("Buildings output per hour:", value=0, min_value=0)
+        output_per_hour = num_of_buildings * building_one
 
-    output_per_hour = building_one + building_two + building_three + building_four + building_five
+    else:
+        building_one = st.number_input("Building 1 output per hour:", value=0, min_value=0)
+        building_two = st.number_input("Building 2 output per hour:", value=0, min_value=0)
+        building_three = st.number_input("Building 3 output per hour:", value=0, min_value=0)
+        building_four = st.number_input("Building 4 output per hour:", value=0, min_value=0)
+        building_five = st.number_input("Building 5 output per hour:", value=0, min_value=0)
+
+        output_per_hour = building_one + building_two + building_three + building_four + building_five
 
     output_list = []
     for i in np.arange(0, 240):
